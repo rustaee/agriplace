@@ -37,12 +37,13 @@ const Navigation = styled.ul`
   }
 `;
 
-const Sidebar = () => {
+const TheSidebar = () => {
   return (
     <>
       <Logo>
         <img src="/assets/logo.png" alt="Harvest Haven" />
       </Logo>
+
       <Navigation>
         <Link to="/admin/fruits">
           <li>
@@ -59,4 +60,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default TheSidebar;
