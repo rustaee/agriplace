@@ -32,7 +32,7 @@ export class CRUD<T extends { id: string }> {
     return item;
   };
 
-  removeItem = (item: T) => {
+  deleteItem = (item: T) => {
     const items = this.getItems();
     const newItems = items.filter((existedItem) => existedItem.id !== item.id);
     localStorage.setItem(this.name, JSON.stringify(newItems));
