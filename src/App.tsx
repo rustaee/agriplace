@@ -1,5 +1,10 @@
 import "./App.css";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
 import { Main } from "components/Main";
 import { Vegetables } from "./components/Vegetables";
 import { Fruits } from "./components/Fruits";
@@ -12,7 +17,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/admin" element={<Fruits />} />
+
+          <Route path="/admin" element={<Navigate to="/admin/fruits" />} />
           <Route path="/admin/vegetables" element={<Vegetables />} />
           <Route path="/admin/fruits" element={<Fruits />} />
         </Routes>
