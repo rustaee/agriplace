@@ -95,7 +95,6 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit, fruit }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-
         {/* Description  */}
         <StyledTextarea
           style={{ width: "100%" }}
@@ -104,8 +103,8 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit, fruit }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-
         {/* Tags */}
+        <span style={{ width: "100%" }}>please press enter to add a tag</span>
         <TextField
           fullWidth
           id="outlined-basic"
@@ -128,7 +127,6 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit, fruit }) => {
             />
           ))}
         </div>
-
         {/* Actions */}
         <div className="actions">
           <Button
