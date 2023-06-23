@@ -110,7 +110,7 @@ export const Fruits: React.FC<FruitsProps> = () => {
   };
 
   const handleSubmit = (fruit: FruitEdit | Fruit) => {
-    "id" in fruit ? editFruit(fruit as Fruit) : createFruit(fruit);
+    fruit.id ? editFruit(fruit as Fruit) : createFruit(fruit);
     toggleDrawer();
   };
 

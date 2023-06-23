@@ -27,7 +27,7 @@ const TheHeader = () => {
     <Header>
       <div className="breadcrumb">
         <Breadcrumbs separator="›" aria-label="breadcrumbs">
-          <Link to="/admin">
+          <Link to="/">
             <Icon path={mdiHome} size={1} />{" "}
           </Link>
           {path.map((item, index) => {

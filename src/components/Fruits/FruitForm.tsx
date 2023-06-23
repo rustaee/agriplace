@@ -145,6 +145,7 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit, fruit }) => {
               if (e.key === "Enter") e.preventDefault();
             }} // prevent form submit when user press enter Because we want to add to tags array
             variant="contained"
+            disabled={name === "" || description === ""}
             style={{ backgroundColor: "#59A96A", color: "#fff" }}
           >
             Save

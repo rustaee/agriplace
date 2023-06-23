@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import Layout from "../../layouts/main/main.layout";
+import { Link } from "react-router-dom";
 
 const App = styled.div`
   display: grid;
@@ -30,7 +32,11 @@ const App = styled.div`
 export const Main = () => {
   return (
     <App>
-      <div className="products"></div>
+      <div className="products">
+        <h1>
+          <Link to="/admin">Dashboard</Link>
+        </h1>
+      </div>
       <div className="product-view"></div>
       <div className="cart"></div>
       <div className="recent-products"></div>
