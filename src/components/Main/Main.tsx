@@ -5,6 +5,8 @@ import { useGetFruitsQuery } from "app/api";
 import { Fruit } from "types/Fruit";
 import { useState } from "react";
 import { Button } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "app/hooks";
+import { addToCart, removeFromCart } from "../../store/cartSlice";
 
 const App = styled.div`
   display: grid;
@@ -43,9 +45,19 @@ const App = styled.div`
 export const Main = () => {
   const { isError, isLoading, isFetching, data: fruits } = useGetFruitsQuery();
   const [selectedFruit, setSelectedFruit] = useState<Fruit>();
+  const addedFruits = useAppSelector((state) => state.cart);
+  const dispatch = useAppDispatch();
 
-  const addToCart = (fruit: Fruit) => {
-    console.log("Added to cart", fruit);
+  const handleAddToCart = (fruit: Fruit) => {
+    dispatch(addToCart(fruit));
+  };
+
+  const handleRemoveFromCart = (fruit: Fruit) => {
+    dispatch(removeFromCart(fruit.id));
+  };
+
+  const isFruitInCart = (fruit: Fruit) => {
+    return addedFruits.find((f) => f.id === fruit.id);
   };
 
   return (
@@ -78,18 +90,42 @@ export const Main = () => {
             {selectedFruit.tags?.map((tag, index) => (
               <span key={index}>{tag} - </span>
             ))}
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => addToCart(selectedFruit)}
-            >
-              Add to cart
-            </Button>
+            {isFruitInCart(selectedFruit) ? (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleRemoveFromCart(selectedFruit)}
+              >
+                remove
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleAddToCart(selectedFruit)}
+              >
+                Add to cart
+              </Button>
+            )}
           </div>
         )}
       </div>
-      <div className="cart"></div>
+      <div className="cart">
+        <h1>Cart</h1>
+        {addedFruits.map((fruit) => (
+          <div key={fruit.id}>
+            <h3 style={{ display: "inline-block" }}>{fruit.name} </h3>
+
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleRemoveFromCart(fruit)}
+            >
+              X
+            </Button>
+          </div>
+        ))}
+      </div>
       <div className="recent-products"></div>
     </App>
   );
