@@ -9,6 +9,7 @@ const Header = styled.header`
   padding-bottom: 0;
   border-bottom: 1px solid #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 
   .breadcrumb {
     font-size: 0.9rem;
