@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useGetFruitsQuery } from "app/api";
 import { Fruit } from "types/Fruit";
 import { useState } from "react";
+import { Button } from "@mui/material";
 
 const App = styled.div`
   display: grid;
@@ -43,6 +44,10 @@ export const Main = () => {
   const { isError, isLoading, isFetching, data: fruits } = useGetFruitsQuery();
   const [selectedFruit, setSelectedFruit] = useState<Fruit>();
 
+  const addToCart = (fruit: Fruit) => {
+    console.log("Added to cart", fruit);
+  };
+
   return (
     <App>
       <div className="products">
@@ -73,6 +78,14 @@ export const Main = () => {
             {selectedFruit.tags?.map((tag, index) => (
               <span key={index}>{tag} - </span>
             ))}
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => addToCart(selectedFruit)}
+            >
+              Add to cart
+            </Button>
           </div>
         )}
       </div>
