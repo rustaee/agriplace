@@ -10,6 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {
+  Alert,
   Button,
   Chip,
   Dialog,
@@ -18,12 +19,14 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Snackbar,
 } from "@mui/material";
 
 //Components
 import Layout from "layouts/admin/admin.layout";
 import LoadingTable from "components/loadings/loadingTable";
 import FruitForm from "./FruitForm";
+import LoadingBackdrop from "components/loadings/loadingBackdrop";
 
 //API
 import {
@@ -36,8 +39,10 @@ import {
 //Icons
 import Icon from "@mdi/react";
 import { mdiDelete, mdiPencil, mdiPlus } from "@mdi/js";
-import { Dangerous, Warning } from "@mui/icons-material";
+
+//Types
 import { Fruit } from "types/Fruit";
+import { FruitEdit } from "./FruitForm";
 
 export interface FruitsProps {}
 
@@ -74,23 +79,44 @@ export const Fruits: React.FC<FruitsProps> = () => {
   const [drawerState, setDrawerState] = useState(false);
   const toggleDrawer = () => setDrawerState(!drawerState);
 
-  //Handle the form submit to Create or Update a fruit
   const [addFruit, { isLoading: isAdding }] = useAddFruitMutation();
   const [updateFruit, { isLoading: isUpdating }] = useUpdateFruitMutation();
   const [deleteFruit, { isLoading: isDeleting }] = useDeleteFruitMutation();
 
-  const handleSubmit = async (fruit: any) => {
-    if (fruit.id) {
+  //Handle the form  to Create or Update a fruit
+  const openForm = (fruit?: Fruit) => {
+    setSelectedFruit(fruit);
+    toggleDrawer();
+  };
+
+  const editFruit = async (fruit: Fruit) => {
+    try {
       await updateFruit(fruit);
-    } else {
-      await addFruit(fruit);
+      handleSnackbarState(true, "Fruit updated successfully", "success");
+    } catch (error) {
+      handleSnackbarState(true, "Error updating fruit", "error");
+    } finally {
+      setSelectedFruit(undefined);
     }
+  };
+
+  const createFruit = async (fruit: FruitEdit) => {
+    try {
+      await addFruit(fruit);
+      handleSnackbarState(true, "Fruit created successfully", "success");
+    } catch (error) {
+      handleSnackbarState(true, "Error creating fruit", "error");
+    }
+  };
+
+  const handleSubmit = (fruit: FruitEdit | Fruit) => {
+    "id" in fruit ? editFruit(fruit as Fruit) : createFruit(fruit);
     toggleDrawer();
   };
 
   //Handle the delete action
   const [isDialogOPen, setIsDialogOpen] = useState(false);
-  const [selectedFruit, setSelectedFruit] = useState<Fruit | null>(null);
+  const [selectedFruit, setSelectedFruit] = useState<Fruit>();
 
   const handleFruitDelete = (fruit: Fruit) => {
     confirmDialogState(true);
@@ -101,9 +127,38 @@ export const Fruits: React.FC<FruitsProps> = () => {
     setIsDialogOpen(state);
   };
 
-  const DeleteFruit = () => {
+  const DeleteFruit = async () => {
     setIsDialogOpen(false);
-    selectedFruit && deleteFruit(selectedFruit);
+    if (!selectedFruit) return;
+    try {
+      await deleteFruit(selectedFruit);
+      handleSnackbarState(true, "Fruit deleted successfully", "success");
+    } catch (error) {
+      handleSnackbarState(true, "Error deleting fruit", "error");
+    } finally {
+      setSelectedFruit(undefined);
+    }
+  };
+
+  //Handle the snackbar state
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "error" | "warning" | "info" | undefined
+  >();
+
+  const handleSnackbarState = (
+    state: boolean,
+    message: string,
+    severity: "success" | "error" | "warning" | "info" | undefined
+  ) => {
+    setIsSnackbarOpen(state);
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+  };
+
+  const handleCloseSnackbar = () => {
+    setIsSnackbarOpen(false);
   };
 
   return (
@@ -111,6 +166,7 @@ export const Fruits: React.FC<FruitsProps> = () => {
       drawerState={drawerState}
       drawerContent={
         <FruitForm
+          fruit={selectedFruit}
           onCancel={toggleDrawer}
           onSubmit={(fruit) => handleSubmit(fruit)}
         />
@@ -123,14 +179,17 @@ export const Fruits: React.FC<FruitsProps> = () => {
           className="create-btn"
           variant="contained"
           startIcon={<Icon path={mdiPlus} size={1} />}
-          onClick={toggleDrawer}
+          onClick={() => openForm()}
           style={{ backgroundColor: "#59A96A", color: "#fff" }}
         >
           Add Fruit
         </Button>
 
         {/* Loading */}
-        {(isLoading || isFetching) && <LoadingTable />}
+        {isLoading && <LoadingTable />}
+        {(isFetching || isDeleting || isAdding || isUpdating) && (
+          <LoadingBackdrop />
+        )}
 
         {/* Data table */}
         {fruits && (
@@ -169,7 +228,7 @@ export const Fruits: React.FC<FruitsProps> = () => {
                       <div className="actions">
                         <IconButton
                           aria-label="edit"
-                          onClick={() => setDrawerState(true)}
+                          onClick={() => openForm(fruit)}
                         >
                           <Icon path={mdiPencil} size={1} color="#59A96A" />
                         </IconButton>
@@ -188,6 +247,7 @@ export const Fruits: React.FC<FruitsProps> = () => {
           </TableContainer>
         )}
 
+        {/* Confirm Dialog */}
         <Dialog
           open={isDialogOPen}
           onClose={() => confirmDialogState(false)}
@@ -214,6 +274,21 @@ export const Fruits: React.FC<FruitsProps> = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Snackbar */}
+        <Snackbar
+          open={isSnackbarOpen}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
       </Wrapper>
     </Layout>
   );

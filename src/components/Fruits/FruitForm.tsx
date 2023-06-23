@@ -5,12 +5,13 @@ import styled from "styled-components";
 import { Fruit } from "types/Fruit";
 
 interface FruitFormProps {
+  fruit?: Fruit;
   onCancel: () => void;
   onSubmit: (fruit: FruitEdit) => void;
 }
 
-interface FruitEdit extends Omit<Fruit, "id"> {
-  id?: number;
+export interface FruitEdit extends Omit<Fruit, "id"> {
+  id?: string;
 }
 
 const Form = styled.form`
@@ -56,16 +57,17 @@ const StyledTextarea = styled(TextareaAutosize)`
     outline: 0;
   }
 `;
-const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit }) => {
+const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit, fruit }) => {
   // States
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [id] = useState(fruit?.id);
+  const [name, setName] = useState(fruit?.name || "");
+  const [description, setDescription] = useState(fruit?.description || "");
   const [tag, setTag] = useState(""); // tag is temporary
-  const [tags, setTags] = useState<string[]>([]); // tags is the final array
+  const [tags, setTags] = useState<string[]>(fruit?.tags ?? []); // tags is the final array
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit({ name, description, tags });
+    onSubmit({ id, name, description, tags });
   };
 
   const addToTags = (e: React.KeyboardEvent) => {
