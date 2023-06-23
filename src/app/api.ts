@@ -48,6 +48,11 @@ export const api = createApi({
         resolveAsync({ data: vegetablesCrud.updateItem(vegetable) }),
       invalidatesTags: ["Vegetable"],
     }),
+    deleteVegetable: builder.mutation<Vegetable, Vegetable>({
+      queryFn: (vegetable) =>
+        resolveAsync({ data: vegetablesCrud.deleteItem(vegetable) }),
+      invalidatesTags: ["Vegetable"],
+    }),
     getFruitTags: builder.query<Tag[], void>({
       queryFn: () => resolveAsync({ data: fruitTags }),
     }),
@@ -65,6 +70,7 @@ export const {
   useGetVegetablesQuery,
   useAddVegetableMutation,
   useUpdateVegetableMutation,
+  useDeleteVegetableMutation,
   useGetFruitTagsQuery,
   useGetVegetableTagsQuery,
 } = api;
