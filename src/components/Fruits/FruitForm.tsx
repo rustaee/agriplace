@@ -1,4 +1,4 @@
-import { Button, TextField, TextareaAutosize } from "@mui/material";
+import { Button, Chip, TextField, TextareaAutosize } from "@mui/material";
 import { useState } from "react";
 
 import styled from "styled-components";
@@ -75,6 +75,12 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit }) => {
     setTag("");
   };
 
+  const removeTag = (index: number) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  };
+
   return (
     <>
       <Form onSubmit={(e) => handleSubmit(e)}>
@@ -109,6 +115,17 @@ const FruitForm: React.FC<FruitFormProps> = ({ onCancel, onSubmit }) => {
             if (e.key === "Enter") addToTags(e); // add to tags array when user press enter
           }}
         />
+        {/* Show the tags */}
+        <div className="tags">
+          {tags.map((tag, index) => (
+            <Chip
+              label={tag}
+              key={index}
+              onDelete={() => removeTag(index)}
+              style={{ marginRight: "4px" }}
+            />
+          ))}
+        </div>
 
         {/* Actions */}
         <div className="actions">
